@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.zip.DeflaterOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -24,22 +25,18 @@ public class Blob {
 	}
 	
 	byte[] zip(byte[] input) {
-		// https://stackoverflow.com/questions/357851/in-java-how-to-zip-file-from-byte-array
+		// https://stackoverflow.com/questions/51332314/java-byte-array-compression
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ZipOutputStream stream = new ZipOutputStream(baos);
-		ZipEntry entry = new ZipEntry("temp");
-		entry.setSize(input.length);
+		DeflaterOutputStream deflater = new DeflaterOutputStream(baos);
 		try {
-			stream.putNextEntry(entry);
-			stream.write(input);
-			stream.closeEntry();
-			stream.close();
+			deflater.write(input);
+			deflater.flush();
+			deflater.close();
 		} catch(IOException e) {
 			System.out.println(e);
 			return new byte[0];
 		}
 		return baos.toByteArray();
-		
 	}
 	
 	public Blob(String filename) {
@@ -51,12 +48,12 @@ public class Blob {
 			return;
 		}
 		String hashed = hash(content);
+		Path parent = Paths.get("objects");
 		Path newPath = Paths.get("objects", hashed);
 		byte[] zipped = zip(content);
 		try {
-			Files.createDirectories(newPath);
-			Files.delete(newPath);
-			Files.createFile(newPath);
+			if(!Files.exists(parent)) Files.createDirectory(parent);
+			if(!Files.exists(newPath)) Files.createFile(newPath);
 			Files.write(newPath, zipped);
 		} catch(IOException e) {
 			System.out.println(e);

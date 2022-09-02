@@ -11,7 +11,21 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class Blob {
-	String hash(byte[] input) {
+	String hash;
+	
+	public String getHash() { return hash; }
+	
+	public static String createHash(String filename) {
+		byte[] content = new byte[0];
+		try {
+			content = Files.readAllBytes(Paths.get(filename));
+		} catch(IOException e) {
+			System.out.println(e);
+			return "";
+		}
+		return createHash(content);
+	}
+	public static String createHash(byte[] input) {
 		// https://www.geeksforgeeks.org/sha-1-hash-in-java/
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -47,9 +61,9 @@ public class Blob {
 			System.out.println(e);
 			return;
 		}
-		String hashed = hash(content);
+		hash = createHash(content);
 		Path parent = Paths.get("objects");
-		Path newPath = Paths.get("objects", hashed);
+		Path newPath = Paths.get("objects", hash);
 		byte[] zipped = zip(content);
 		try {
 			if(!Files.exists(parent)) Files.createDirectory(parent);

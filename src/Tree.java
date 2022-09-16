@@ -22,15 +22,19 @@ public class Tree {
 		sha1 = String.format("%040x", new BigInteger(1, digest.digest()));
 	}
 	public void storeArrayList() throws IOException {
-		File treeFile = new File("/objects/" + sha1);
+		String directory = "./objects/";
+		File treeFile = new File(directory + sha1);
 		FileWriter myWriter = new FileWriter(treeFile);
 		for (int i = 0; i < pairs.size(); i++) {
 			myWriter.write(pairs.get(i));
+			myWriter.write("\n");
 		}
 		myWriter.close();
 	}
-	
-	public static void main(String [] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+	public String getSha1() {
+		return sha1;
+	}
+	public static void main(String [] args) throws NoSuchAlgorithmException, IOException {
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("blob : 81e0268c84067377a0a1fdfb5cc996c93f6dcf9f");
 		list.add("blob : 01d82591292494afd1602d175e165f94992f6f5f");

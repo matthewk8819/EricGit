@@ -117,6 +117,20 @@ class JUnitTester {
 		assertTrue(fileContent.equals(producedText));
 	}
 	
+	@Test
+	void testTree() throws IOException {
+		Blob bugsLife = new Blob("BLOB1.txt");
+		Blob emojiMovie = new Blob("BLOB2.txt");
+		Blob morbius = new Blob("BLOB3.txt");
+		
+		String[] treeContentOne = new String[] {
+			"blob : " + bugsLife.getHash(), // Bee Movie
+			"blob: " + emojiMovie.getHash(),
+			"blob : " + morbius.getHash()
+		};
+		Tree treeOne = new Tree(treeContentOne);
+	}
+	
 	static void writeFile(String fileName, String data) throws IOException {
 		FileWriter writer = new FileWriter(fileName);
 		writer.write(data);

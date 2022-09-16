@@ -11,12 +11,33 @@ import java.util.HashMap;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class JUnitTester {
 	HashMap<String, String> map = new HashMap<String, String>();
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
+	
+	static void deleteDirectory(File directoryToBeDeleted) { // https://www.baeldung.com/java-delete-directory
+	    File[] allContents = directoryToBeDeleted.listFiles();
+	    if (allContents != null) {
+	        for (File file : allContents) {
+	            deleteDirectory(file);
+	        }
+	    }
+	    directoryToBeDeleted.delete();
+	}
+	
+	@BeforeEach
+	void beforeEach() throws Exception {
+		Path path1 = Paths.get("firstFile.txt");
+		Files.deleteIfExists(path1);
+		Path path2 = Paths.get("secondFile.txt");
+		Files.deleteIfExists(path2);
+		Path path3 = Paths.get("thirdFile.txt");
+		Files.deleteIfExists(path3);
+		Path path4 = Paths.get("tester.txt");
+		Files.deleteIfExists(path4);
+		
 		File file1 = new File("firstFile.txt");
 		file1.createNewFile();
 		File file2 = new File("secondFile.txt");
@@ -29,9 +50,13 @@ class JUnitTester {
 		writeFile("secondFile.txt", "more content");
 		writeFile("thirdFile.txt", "more stuff");
 		writeFile("testFile.txt", "stuff");
+		
+		if(Files.exists(Paths.get("objects"))) deleteDirectory(Paths.get("objects").toFile());
+		if(Files.exists(Paths.get("index"))) Files.delete(Paths.get("index"));
 	}
+	
 	@AfterAll
-	static void tearDownAfterClass() throws Exception {
+	static void afterAll() throws Exception {
 		Path path1 = Paths.get("firstFile.txt");
 		Files.deleteIfExists(path1);
 		Path path2 = Paths.get("secondFile.txt");
@@ -40,11 +65,15 @@ class JUnitTester {
 		Files.deleteIfExists(path3);
 		Path path4 = Paths.get("tester.txt");
 		Files.deleteIfExists(path4);
+		
+		if(Files.exists(Paths.get("objects"))) deleteDirectory(Paths.get("objects").toFile());
+		if(Files.exists(Paths.get("index"))) Files.delete(Paths.get("index"));
 	}
+	
 	@Test
 	void testBlob() throws IOException {
 		Blob newBlob = new Blob("tester.txt");
-		File blobFile = new File("/objects/" + newBlob.getHash());
+		File blobFile = new File("objects/" + newBlob.getHash());
 		assertTrue(blobFile.exists());
 	}
 	@Test
@@ -59,6 +88,7 @@ class JUnitTester {
 	@Test
 	void testAdd() throws IOException {
 		Index i = new Index();
+		i.init();
 		i.add("firstFile.txt");
 		i.add("secondFile.txt");
 		i.add("thirdFile.txt");
@@ -73,9 +103,11 @@ class JUnitTester {
 	@Test
 	void testRemove() throws IOException {
 		Index i = new Index();
+		i.init();
 		Blob b = new Blob("firstFile.txt");
+		i.add("firstFile.txt");
 		String sha1 = b.getHash();
-		File blobFile = new File("/objects/" + sha1);
+		File blobFile = new File("objects/" + sha1);
 		i.remove("firstFile.txt");
 		map.remove("firstFile.txt");
 		assertFalse(blobFile.exists());
@@ -83,8 +115,8 @@ class JUnitTester {
 		String fileContent = Files.readString(filePath);
 		String producedText = i.stringifyIndex(map);
 		assertTrue(fileContent.equals(producedText));
-		
 	}
+	
 	static void writeFile(String fileName, String data) throws IOException {
 		FileWriter writer = new FileWriter(fileName);
 		writer.write(data);

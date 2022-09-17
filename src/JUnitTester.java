@@ -3,14 +3,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,8 +37,8 @@ class JUnitTester {
 		Files.writeString(path2, "The Emoji Movie");
 		Files.writeString(path3, "Morbius");
 		
-		if(Files.exists(Paths.get("objects"))) deleteDirectory(Paths.get("objects").toFile());
-		if(Files.exists(Paths.get("index"))) Files.delete(Paths.get("index"));
+//		if(Files.exists(Paths.get("objects"))) deleteDirectory(Paths.get("objects").toFile());
+//		if(Files.exists(Paths.get("index"))) Files.delete(Paths.get("index"));
 	}
 	
 	@AfterAll
@@ -50,8 +47,8 @@ class JUnitTester {
 		Files.deleteIfExists(path2);
 		Files.deleteIfExists(path3);
 		
-		if(Files.exists(Paths.get("objects"))) deleteDirectory(Paths.get("objects").toFile());
-		if(Files.exists(Paths.get("index"))) Files.delete(Paths.get("index"));
+//		if(Files.exists(Paths.get("objects"))) deleteDirectory(Paths.get("objects").toFile());
+//		if(Files.exists(Paths.get("index"))) Files.delete(Paths.get("index"));
 	}
 	
 	@Test
@@ -136,10 +133,23 @@ class JUnitTester {
 		assertEquals(Files.readString(pathTwo), "blob:" + morbius.getHash() + "\ntree:" + treeOne.getHash() + "\n");
 	}
 	
-	static void writeFile(String fileName, String data) throws IOException {
-		FileWriter writer = new FileWriter(fileName);
-		writer.write(data);
-		writer.close();
+	@Test
+	void testCommit() throws IOException {
+		Index index = new Index();
+		index.init();
+		
+		Blob blobby = new Blob("BLOB1.txt");
+		
+		Commit a = new Commit("Commit A", "Eric", "09/16/2022", "objects/" + blobby.getHash(), null);
+		Path pathA = Paths.get(a.getPath());
+		assertTrue(Files.exists(pathA));
+		assertEquals(Files.readString(pathA), "objects/" + blobby.getHash() + "\n\n\nEric\n09/16/2022\nCommit A\n");
+		
+		Commit b = new Commit("Commit B", "Eric", "09/16/2022", "objects/" + blobby.getHash(), a);
+		Path pathB = Paths.get(b.getPath());
+		assertTrue(Files.exists(pathB));
+		assertEquals(Files.readString(pathB), "objects/" + blobby.getHash() + "\nobjects/" + a.getPath() + "\n\nEric\n09/16/2022\nCommit B\n");
+		assertEquals(Files.readString(pathA), "objects/" + blobby.getHash() + "\n\n" + b.getPath() + "\nEric\n09/16/2022\nCommit A\n");
 	}
 
 }

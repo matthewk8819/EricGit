@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.time.*;
 import java.nio.file.*;
 
 public class Commit {
@@ -10,10 +11,10 @@ public class Commit {
 	String date;
 	String cachedHash;
 	
-	public Commit(String summary, String author, String date, String pTree, Commit parent) {
+	public Commit(String pTree, String summary, String author, Commit parent) {
 		this.summary = summary;
 		this.author = author;
-		this.date = date;
+		this.date = Instant.now().toString();
 		this.pTree = pTree;
 		this.parent = parent;
 		cachedHash = null;
@@ -40,12 +41,18 @@ public class Commit {
 		return date;
 	}
 	
-	public String stringify() {
+	public String stringify(boolean includeNextCommit) {
 		StringBuilder builder = new StringBuilder();
+		
+		if(includeNextCommit)
+			builder.append(pTree).append('\n');
+		
+		builder.append(parent != null ? parent.getPath() : "").append('\n');
+		
+		if(includeNextCommit)
+			builder.append(next != null ? next.getPath() : "").append('\n');
+		
 		builder
-			.append(pTree).append('\n')
-			.append(parent != null ? parent.getPath() : "").append('\n')
-			.append(next != null ? next.getPath() : "").append('\n')
 			.append(author).append('\n')
 			.append(date).append('\n')
 			.append(summary).append('\n');
@@ -55,7 +62,7 @@ public class Commit {
 	
 	public String getHash() {
 		if(cachedHash == null) {
-			cachedHash = Blob.createHash(stringify().getBytes());
+			cachedHash = Blob.createHash(stringify(false).getBytes());
 		}
 		return cachedHash;
 	}
@@ -66,7 +73,7 @@ public class Commit {
 	
 	public void writeToDisk() {
 		try {
-			Files.writeString(Paths.get(getPath()), stringify());
+			Files.writeString(Paths.get(getPath()), stringify(true));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -138,18 +139,35 @@ class JUnitTester {
 		Index index = new Index();
 		index.init();
 		
+		String time = Instant.now().toString();
 		Blob blobby = new Blob("BLOB1.txt");
 		
-		Commit a = new Commit("Commit A", "Eric", "09/16/2022", "objects/" + blobby.getHash(), null);
+		Commit a = new Commit("objects/" + blobby.getHash(), "Commit A", "Eric", null);
 		Path pathA = Paths.get(a.getPath());
 		assertTrue(Files.exists(pathA));
-		assertEquals(Files.readString(pathA), "objects/" + blobby.getHash() + "\n\n\nEric\n09/16/2022\nCommit A\n");
+		assertTrue(commitStringEquals(Files.readString(pathA), "objects/" + blobby.getHash() + "\n\n\nEric\n" + time + "\nCommit A\n"));
 		
-		Commit b = new Commit("Commit B", "Eric", "09/16/2022", "objects/" + blobby.getHash(), a);
+		Commit b = new Commit("objects/" + blobby.getHash(), "Commit B", "Eric", a);
 		Path pathB = Paths.get(b.getPath());
 		assertTrue(Files.exists(pathB));
-		assertEquals(Files.readString(pathB), "objects/" + blobby.getHash() + "\nobjects/" + a.getPath() + "\n\nEric\n09/16/2022\nCommit B\n");
-		assertEquals(Files.readString(pathA), "objects/" + blobby.getHash() + "\n\n" + b.getPath() + "\nEric\n09/16/2022\nCommit A\n");
+		assertTrue(commitStringEquals(Files.readString(pathA), "objects/" + blobby.getHash() + "\n\nobjects/" + b.getHash() + "\nEric\n\" + time + \"\nCommit A\n"));
+		assertTrue(commitStringEquals(Files.readString(pathB), "objects/" + blobby.getHash() + "\nobjects/" + a.getHash() + "\n\nEric\n\" + time + \"\nCommit B\n"));
+		
+		Commit c = new Commit("objects/" + blobby.getHash(), "Commit C", "Eric", b);
+		Path pathC = Paths.get(c.getPath());
+		assertTrue(Files.exists(pathC));
+		assertTrue(commitStringEquals(Files.readString(pathB), "objects/" + blobby.getHash() + "\nobjects/" + a.getHash() + "\nobjects/" + c.getHash() + "\nEric\n\" + time + \"\nCommit B\n"));
+		assertTrue(commitStringEquals(Files.readString(pathC), "objects/" + blobby.getHash() + "\nobjects/" + b.getHash() + "\n\nEric\n\" + time + \"\nCommit C\n"));
 	}
-
+	
+	boolean commitStringEquals(String a, String b) {
+		String[] aSplit = a.split("\n");
+		String[] bSplit = b.split("\n");
+		if(aSplit.length != bSplit.length) return false;
+		for(int i = 0; i < aSplit.length; i++) {
+			if(i == 4) continue; // Don't check dates are equal
+			if(!aSplit[i].equals(bSplit[i])) return false;
+		}
+		return true;
+	}
 }

@@ -1,4 +1,6 @@
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
@@ -9,6 +11,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.zip.DeflaterOutputStream;
 
 public class Blob {
+	
+	public static void main (String [] args) throws IOException {
+		File f = new File("file1");
+		FileWriter w = new FileWriter (f);
+		w.append("File 1 contents");
+		w.close();
+		Blob b = new Blob("file1");
+	}
+	
 	String hash;
 	
 	public String getHash() { return hash; }

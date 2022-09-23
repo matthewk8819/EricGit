@@ -1,0 +1,19 @@
+Blob: 
+- create blob from file
+- create object folder 
+- puts blob into objects folder with zipped contents
+
+Index: 
+- initialize index file
+- add a filename (does the sha1 conversion with naming) (also creates blob + creates objects folder)
+- remove removes from index and removes blob 
+
+Tree: 
+- Writes to file with sha1 name of contents to objects with the array of strings
+- assumes objects folder already exists 
+
+Commit: 
+- Creates a commit with first line = String inputed in the constructor (make this sha1 of tree eventually)
+- Works with the child and parent assigning
+- date = line with date and time 
+- referencing parent/child - refers to the objects/sha1 of that object 

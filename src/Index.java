@@ -6,6 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Index {
+	
+	public static void main (String [] args) {
+		Index index = new Index();
+		index.init();
+		index.add("file1");
+		//index.remove("file1");
+	}
+	
 	HashMap<String, String> index = new HashMap<String, String>();
 	
 	public void init() {
@@ -36,7 +44,7 @@ public class Index {
 	String stringifyIndex(HashMap<String, String> map) {
 		StringBuilder ret = new StringBuilder();
 		for(Map.Entry<String, String> i : map.entrySet()) {
-			ret.append(i.getKey()).append(':').append(i.getValue()).append('\n');
+			ret.append(i.getKey()).append(":").append(i.getValue()).append('\n');
 		}
 		return ret.toString();
 	}

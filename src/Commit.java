@@ -3,6 +3,11 @@ import java.time.*;
 import java.nio.file.*;
 
 public class Commit {
+	public static void main (String [] args) {
+		Commit c = new Commit("treeSha1?","summary of first commit", "i am the author boy",null);
+		Commit child = new Commit("treeSha2?", "summary of second commit", "second author sir doctor", c);
+	}
+	
 	Commit next;
 	Commit parent;
 	String pTree;

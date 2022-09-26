@@ -1,26 +1,41 @@
 import java.io.IOException;
 import java.time.*;
+import java.util.ArrayList;
 import java.nio.file.*;
 
 public class Commit {
 	public static void main (String [] args) {
-		Commit c = new Commit("treeSha1?","summary of first commit", "i am the author boy",null);
-		Commit child = new Commit("treeSha2?", "summary of second commit", "second author sir doctor", c);
+		//Commit c = new Commit("summary of first commit", "i am the author boy",null);
+		//Commit child = new Commit( "summary of second commit", "second author sir doctor", c);
 	}
 	
 	Commit next;
 	Commit parent;
-	String pTree;
+	Tree pTree;
+	String treeLocation;
 	String summary;
 	String author;
 	String date;
 	String cachedHash;
 	
-	public Commit(String pTree, String summary, String author, Commit parent) {
+	private Tree initializeTree(String pTree, String[] blobs) {
+		String[] withTree = new String[blobs.length + 1];
+		for (int i = 0; i < blobs.length; i++) {
+			withTree[i] = blobs[i];
+		}
+		withTree[withTree.length-1] = pTree;
+		Tree newTree = new Tree(withTree);
+		return newTree;//has all the blobs to be added and the last tree
+		
+	}
+	
+	public Commit(String lastTree, String[] indexBlobs, String summary, String author, Commit parent) {
+		this.pTree = initializeTree(lastTree,indexBlobs);
+		this.treeLocation = "objects/" + pTree.getHash();
 		this.summary = summary;
 		this.author = author;
 		this.date = Instant.now().toString();
-		this.pTree = pTree;
+		//this.pTree = pTree;
 		this.parent = parent;
 		cachedHash = null;
 		writeToDisk();
@@ -44,6 +59,10 @@ public class Commit {
 	
 	public String getDate() {
 		return date;
+	}
+	
+	public String getTreeLocation() {
+		return treeLocation;
 	}
 	
 	public String stringify(boolean includeNextCommit) {

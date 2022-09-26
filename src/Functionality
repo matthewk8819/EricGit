@@ -17,3 +17,10 @@ Commit:
 - Works with the child and parent assigning
 - date = line with date and time 
 - referencing parent/child - refers to the objects/sha1 of that object 
+
+
+Things to do for git/ methods: 
+1) ADD HEAD POINTER - can just be a instance variable in Git object 
+
+For every commit: 
+- 

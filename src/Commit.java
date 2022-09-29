@@ -1,6 +1,9 @@
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.nio.file.*;
 
 public class Commit {
@@ -9,8 +12,8 @@ public class Commit {
 		//Commit child = new Commit( "summary of second commit", "second author sir doctor", c);
 	}
 	
-	Commit next;
-	Commit parent;
+	String next;
+	String parent;
 	Tree pTree;
 	String treeLocation;
 	String summary;
@@ -29,7 +32,7 @@ public class Commit {
 		
 	}
 	
-	public Commit(String lastTree, String[] indexBlobs, String summary, String author, Commit parent) {
+	public Commit(String lastTree, String[] indexBlobs, String summary, String author, String parent) {
 		this.pTree = initializeTree(lastTree,indexBlobs);
 		this.treeLocation = "objects/" + pTree.getHash();
 		this.summary = summary;
@@ -39,7 +42,7 @@ public class Commit {
 		this.parent = parent;
 		cachedHash = null;
 		writeToDisk();
-		if(parent != null) parent.setNext(this);
+		//if(parent != null) parent.setNext(this); COMMENTED THIS OUT JUST NOW 
 		
 		/*
 		 Very confused
@@ -51,10 +54,23 @@ public class Commit {
 		 */
 	}
 	
-	public void setNext(Commit next) {
-		this.next = next;
-		cachedHash = null;
-		writeToDisk();
+	
+	//read in all the necessary stuff and redo it better 
+	public static void setNext(String fileName, String next) throws IOException {
+		File f = new File("objects/" + fileName);
+		Scanner fs = new Scanner(f);
+		String l1 = fs.nextLine();
+		String l2 = fs.nextLine();
+		fs.nextLine();//would be empty since it doesn't have a child yet
+		String l4 = fs.nextLine();
+		String l5 = fs.nextLine();
+		String l6 = fs.nextLine();
+		FileWriter fw = new FileWriter(f);
+		fw.append(l1 + "\n" + l2 + "\n" + next
+				+ "\n" + l4 
+				+ "\n" + l5 
+				+ "\n" + l6);
+		fw.close();
 	}
 	
 	public String getDate() {
@@ -71,10 +87,10 @@ public class Commit {
 		if(includeNextCommit)
 			builder.append(treeLocation).append('\n');
 		
-		builder.append(parent != null ? parent.getPath() : "").append('\n');
+		builder.append(parent != null ? parent : "").append('\n');
 		
 		if(includeNextCommit)
-			builder.append(next != null ? next.getPath() : "").append('\n');
+			builder.append(next != null ? next : "").append('\n');
 		
 		builder
 			.append(author).append('\n')

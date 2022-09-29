@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Git {
 	
@@ -21,6 +22,8 @@ public class Git {
 		git.stageFile("text1.txt");
 		git.stageFile("text2.txt");
 		git.addCommit("SUMMARYYAY","AUTHOR");
+		git.stageFile("text3.txt");
+		git.addCommit("SUMMARY2","SAME AUTHOR");
 	}
 	
 	
@@ -42,11 +45,15 @@ public class Git {
 	public static void writeFilesTest() throws IOException {
 		File f1 = new File("text1.txt");
 		File f2 = new File("text2.txt");
+		File f3 = new File("text3.txt");
 		FileWriter w = new FileWriter(f1);
 		w.append("This is some content 1");
 		w.close();
 		w = new FileWriter (f2);
 		w.append("This is some content 2");
+		w.close();
+		w = new FileWriter (f3);
+		w.append("This is some content 3");
 		w.close();
 	}
 	
@@ -64,6 +71,24 @@ public class Git {
 			FileWriter fw = new FileWriter(headF);
 			fw.append(newCommit.getHash());
 			fw.close();
+			headFile = headF.getName();
+			System.out.println(headFile);
+		}
+		else {//not first commit
+			File f = new File(headFile);
+			Scanner headReader = new Scanner(f);
+			String prevCommit = headReader.nextLine();//prevCommit = name of now past commit
+			File lastCommit = new File("objects/" + prevCommit);
+			Scanner commitReader = new Scanner(lastCommit);
+			String lastTree = commitReader.nextLine();
+			String [] indexContents = i.getIndexContents();
+			Commit newCommit = new Commit(lastTree,indexContents,summary,auth,"objects/"+prevCommit);
+			//set the prevCommit next to this current one 
+			Commit.setNext(prevCommit, newCommit.getHash());
+			FileWriter fw = new FileWriter(f);
+			fw.append(newCommit.getHash());
+			fw.close();
+			
 		}
 		ArrayList<String> indexList = new ArrayList<String>();
 		

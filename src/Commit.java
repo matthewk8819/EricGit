@@ -69,7 +69,7 @@ public class Commit {
 		StringBuilder builder = new StringBuilder();
 		
 		if(includeNextCommit)
-			builder.append(pTree).append('\n');
+			builder.append(treeLocation).append('\n');
 		
 		builder.append(parent != null ? parent.getPath() : "").append('\n');
 		

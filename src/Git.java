@@ -1,21 +1,73 @@
-
-
-
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Git {
-	Index i;
-	Commit head;
-	Commit prevCommit;
+	
+	//initialize repo
+	//work on files + commit
+	// - write some files 
+	// - stage those files (add to index as blob)
+	//commmit - create a tree by copying index to tree (and then clear index)and also look for previous history 
+	//refer to the functionality for the super stuff of deleting and editing 
+	
+	
+	//this is the step of writing some files text1.txt and text2.txt
+	public static void main (String [] args) throws IOException {
+		Git git = new Git();
+		git.initRepo("NewREPO");
+		writeFilesTest();
+		git.stageFile("text1.txt");
+		git.stageFile("text2.txt");
+		git.addCommit("SUMMARYYAY","AUTHOR");
+	}
+	
+	
+	private Index i;
+	private String headFile;//file with the location/name of the current commit object 
+	private String repoName;
 	
 	public Git () {
-		this.i = new Index();
+		
+	}
+	
+	//initialize index, get name of repo
+	public void initRepo (String repoName) {
+		this.repoName = repoName;//idk if this ever comes into play actually
+		i = new Index();
 		i.init();
+	}
+	
+	public static void writeFilesTest() throws IOException {
+		File f1 = new File("text1.txt");
+		File f2 = new File("text2.txt");
+		FileWriter w = new FileWriter(f1);
+		w.append("This is some content 1");
+		w.close();
+		w = new FileWriter (f2);
+		w.append("This is some content 2");
+		w.close();
+	}
+	
+	public void stageFile(String fileName) {
+		i.add(fileName);//creates blob in the index
+	}
+	
+	//adds a commit: if first, sets to head; else makes two way connection with this and prev commit
+	public void addCommit (String summary, String auth) throws IOException {
+		if (headFile==null) {
+			File headF = new File ("HEAD");
+			//read in blobs from index
+			String [] indexContents = i.getIndexContents();
+			Commit newCommit = new Commit("",indexContents,summary,auth,null);
+			FileWriter fw = new FileWriter(headF);
+			fw.append(newCommit.getHash());
+			fw.close();
+		}
+		ArrayList<String> indexList = new ArrayList<String>();
 		
 	}
-
-	public void addCommit (Commit c) {
-		if (head!=null) prevCommit = head;
-		head = c;
-		
-	}
+	
+	
 }

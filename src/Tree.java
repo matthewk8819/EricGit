@@ -26,7 +26,9 @@ public class Tree {
 			e.printStackTrace();
 		}
 	}
-	public String getHash() {
+	public String getHash() {//gets the fileName 
 		return sha1;
 	}
+	
+	
 }

@@ -1,20 +1,53 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Index {
 	
-	public static void main (String [] args) {
+	public static void main (String [] args) throws FileNotFoundException {
 		Index index = new Index();
 		index.init();
 		index.add("file1");
+		index.add("file2");
 		//index.remove("file1");
+		String[] arr = new String[1];
+		try {
+			arr = getIndexContents();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(arr[0] + "\n" + arr[1]);
+	}
+	//CAN REMOVE THE STATIC AFTER DONE WITH MAIN TESTER 
+	static HashMap<String, String> index = new HashMap<String, String>();
+	public static String[] getIndexContents() throws IOException {
+		File indexFile = new File("index");
+		Scanner indexScanner = new Scanner(indexFile);
+		String[] arr = new String[index.size()];
+		int counter = 0;
+		while (indexScanner.hasNextLine()) {
+			arr[counter] = indexScanner.nextLine();
+			counter++;
+		}
+		//clear index
+		clearIndex();
+		return arr;
 	}
 	
-	HashMap<String, String> index = new HashMap<String, String>();
+	private static void clearIndex() throws IOException {//REMOVE STATIC LATER 
+		File f = new File("index");
+		FileWriter fw = new FileWriter(f);
+		fw.append("");
+		fw.close();
+	}
 	
 	public void init() {
 		Path indexFile = Paths.get("index");

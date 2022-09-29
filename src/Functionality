@@ -24,3 +24,16 @@ Things to do for git/ methods:
 
 For every commit: 
 - 
+
+
+
+
+
+for deleting - when in index, it should have a new line called *delete* file1.txt (no sha1 here)
+need to delete that file now (can check for this when scanning through index)
+have to traverse through the trees, find where it was, set the previous tree to that tree and then have to add all the blobs since then
+
+same for editing: would have the *edited* file1.txt -> its just changing the pointers, not changing the objects  
+
+*if it was the first one, can't check for tree (have to check if it has a tree, then you add it to the current commit tree) 
+just have to do the delete and then add the new blob 

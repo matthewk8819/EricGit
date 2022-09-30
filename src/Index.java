@@ -11,21 +11,21 @@ import java.util.Scanner;
 
 public class Index {
 	
-	public static void main (String [] args) throws FileNotFoundException {
-		Index index = new Index();
-		index.init();
-		index.add("file1");
-		index.add("file2");
-		//index.remove("file1");
-		String[] arr = new String[1];
-		try {
-			arr = getIndexContents();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println(arr[0] + "\n" + arr[1]);
-	}
+//	public static void main (String [] args) throws IOException {
+//		Index index = new Index();
+//		index.init();
+//		index.add("file1");
+//		index.add("file2");
+//		//index.remove("file1");
+//		String[] arr = new String[1];
+//		try {
+//			arr = getIndexContents();
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		System.out.println(arr[0] + "\n" + arr[1]);
+//	}
 	//CAN REMOVE THE STATIC AFTER DONE WITH MAIN TESTER 
 	static HashMap<String, String> index = new HashMap<String, String>();
 	public static String[] getIndexContents() throws IOException {
@@ -63,12 +63,11 @@ public class Index {
 	
 	HashMap<String, String> parseIndex(String content) {
 		HashMap<String, String> ret = new HashMap<String, String>();
-		
 		String[] lines = content.split("\n");
 		for(String line : lines) {
-			if(!line.contains(":")) continue;
-			String[] split = line.split(":");
-			ret.put(split[0], split[1]);
+			if(!line.contains(" : ")) continue;
+			String[] split = line.split(" : ");
+			ret.put(split[1], split[0]);
 		}
 		
 		return ret;
@@ -77,7 +76,7 @@ public class Index {
 	String stringifyIndex(HashMap<String, String> map) {
 		StringBuilder ret = new StringBuilder();
 		for(Map.Entry<String, String> i : map.entrySet()) {
-			ret.append(i.getKey()).append(":").append(i.getValue()).append('\n');
+			ret.append(i.getValue()).append(" : ").append(i.getKey()).append('\n');
 		}
 		return ret.toString();
 	}

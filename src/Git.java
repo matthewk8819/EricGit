@@ -21,9 +21,11 @@ public class Git {
 		writeFilesTest();
 		git.stageFile("text1.txt");
 		git.stageFile("text2.txt");
-		git.addCommit("SUMMARYYAY","AUTHOR");
 		git.stageFile("text3.txt");
 		git.addCommit("SUMMARY2","SAME AUTHOR");
+		git.stageFile("text4.txt");
+		git.stageFile("text5.txt");
+		git.addCommit("Summary3", "NEW AUTHOR");
 	}
 	
 	
@@ -46,6 +48,8 @@ public class Git {
 		File f1 = new File("text1.txt");
 		File f2 = new File("text2.txt");
 		File f3 = new File("text3.txt");
+		File f4 = new File("text4.txt");
+		File f5 = new File("text5.txt");
 		FileWriter w = new FileWriter(f1);
 		w.append("This is some content 1");
 		w.close();
@@ -54,6 +58,12 @@ public class Git {
 		w.close();
 		w = new FileWriter (f3);
 		w.append("This is some content 3");
+		w.close();
+		w = new FileWriter (f4);
+		w.append("This is some content 4");
+		w.close();
+		w = new FileWriter (f5);
+		w.append("This is some content 5");
 		w.close();
 	}
 	

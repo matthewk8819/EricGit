@@ -66,7 +66,7 @@ public class Commit {
 		String l5 = fs.nextLine();
 		String l6 = fs.nextLine();
 		FileWriter fw = new FileWriter(f);
-		fw.append(l1 + "\n" + l2 + "\n" + next
+		fw.append(l1 + "\n" + l2 + "\n" + "objects/"+next
 				+ "\n" + l4 
 				+ "\n" + l5 
 				+ "\n" + l6);

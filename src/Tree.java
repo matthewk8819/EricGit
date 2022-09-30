@@ -16,7 +16,15 @@ public class Tree {
 	public Tree(String[] pairs) {
 		this.pairs = pairs;
 		for (int i = 0; i < pairs.length; i++) {
-			combinedString.append(pairs[i]).append('\n');
+			if (pairs[i].length()<6) {
+				
+			}
+			else if (pairs[i].substring(0,6).equals("object")) {
+				combinedString.append("Tree : " +pairs[i]).append('\n');
+			}
+			else {
+				combinedString.append("Blob : " +pairs[i]).append('\n');
+			}
 		}
 		String built = combinedString.toString();
 		sha1 = Blob.createHash(built.getBytes());

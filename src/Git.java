@@ -71,11 +71,25 @@ public class Git {
 		i.add(fileName);//creates blob in the index
 	}
 	
-	public void stageDelete(String fileName) {
+	public void stageDelete(String fileName) throws IOException{
 		//add a line to the index - literally file write it 
+		File f = new File("index");
+		FileWriter fw = new FileWriter(f);
+		Scanner indexScanner = new Scanner(f);
+		String alreadyThere = "";
+		while (indexScanner.hasNextLine()) {
+			alreadyThere = indexScanner.nextLine() + "\n";
+		}
+		String deleteLine = "*DELETE*" + fileName; //ex: *DELETE*text2.txt
+		alreadyThere = alreadyThere + deleteLine;
+		fw.append(alreadyThere); 
+		
+		
 		//when copying in getIndexContents, if find something with *DELETE* or *EDIT* in it, then don't add it
-		//if you find edit or delete, this is the key to start doing things - with boolean (intake the tree name anyways)
+		//if you find edit or delete,boolean = true and add it to the delete or edit arraylist 
 		//0th order: still add everything to the arr of contents 
+		// - NEXT STEPS: DO IT PER DELETE/EDIT: start with filename, finish with a new arraylist (don't submit because might have more edits/deletes) - JUST LOGICED IT OUT AND IT WOULD WORK - AS LONG AS IT WORKS CORRECTLY AND EACH ITERATION WOULD LEAVE THE arraylist in good condition with at most 1 tree and the rest of the blobs 
+		//first order 1: look at current arraylist and see if it exists - if it does, delete it from the array and the delete array 
 		//first order: traverse starting the last tree (can get tree from parameter)
 		// - if there is no tree, means it is the first commit - just go thru the existing contents array and delete the file to be deleted
 		//second order: code the traversal - go thru and do the thing (thru files)

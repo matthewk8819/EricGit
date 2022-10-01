@@ -30,22 +30,59 @@ public class Index {
 	//CAN REMOVE THE STATIC AFTER DONE WITH MAIN TESTER 
 	static HashMap<String, String> index = new HashMap<String, String>();
 	public static String[] getIndexContents(String tree) throws IOException {
+		ArrayList<String> delete = new ArrayList<String>();//contains filenames of deletes
+		ArrayList<String> edit = new ArrayList<String>();//contains filenames of edits 
+		
 		System.out.println("Tree: " + tree);
+		
 		File indexFile = new File("index");
 		Scanner indexScanner = new Scanner(indexFile);
 		ArrayList<String> arr = new ArrayList<String>();
-		int counter = 0;
 		while (indexScanner.hasNextLine()) {
-			arr.add(indexScanner.nextLine());
+			String intake = indexScanner.nextLine();
+			if (intake.substring(0,8).equals("*DELETE*")) {
+				delete.add(intake);
+			}
+			else if (intake.substring(0,6).equals("*EDIT*")) {
+				edit.add(intake);
+			}
+			else {
+				arr.add(intake);
+			}
 		}
-		//clear index
-		clearIndex();
+		//rn everything should be added if it isn't a call
+		//should contain 
+		//for both edit and delete arrays, check if the array has it, if it does then delete it from the delete or edit arrays
+		for (String str:delete) {
+			String finding = Blob.createHash(str) + " : " + str;
+			if (arr.remove(finding)) {
+				delete.remove(str);
+			}
+		}
+		for (String str:edit) {
+			String finding = Blob.createHash(str) + " : " + str;
+			if (arr.remove(finding)) {
+				edit.remove(str);
+			}
+		}
+		
+		//checked in current staged things, now start the traversal process of remaining deletes/edits
+		while (delete.size()>0) {
+			
+		}
+		while (edit.size()>0) {
+			
+		}
 		
 		
+		
+		//CONVERT TO REGULAR ARRAY 
 		String[] array = new String[arr.size()];
 		for (int i = 0; i < array.length; i++) {
 			array[i]=arr.get(i);
 		}
+		clearIndex();
+		//THIS RETURN WILL HAVE THE FINAL THING - NOTHING AFTER THIS SHOULD BE CHANGED
 		return array;
 	}
 	

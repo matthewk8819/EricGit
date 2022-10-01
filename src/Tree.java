@@ -4,11 +4,6 @@ import java.nio.file.Paths;
 
 public class Tree {
 	
-	public static void main (String [] args) {
-		String[] arr = {"hello","there","sir"};
-		Tree t = new Tree(arr);
-	}
-	
 	String[] pairs = new String[0];
 	StringBuilder combinedString = new StringBuilder("");
 	String sha1;
@@ -20,7 +15,13 @@ public class Tree {
 				
 			}
 			else if (pairs[i].substring(0,6).equals("object")) {
-				combinedString.append("Tree : " +pairs[i]).append('\n');
+				if (Index.newTree==false) {
+					combinedString.append("Tree : " +pairs[i]).append('\n');
+				}
+				else {
+					combinedString.append("Tree : " + Index.nT + "\n");
+					Index.newTree = false;
+				}
 			}
 			else {
 				combinedString.append("Blob : " +pairs[i]).append('\n');

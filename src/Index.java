@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Index {
+	public static boolean newTree = false;
+	public static String nT = "";
 	
 	static HashMap<String, String> index = new HashMap<String, String>();
 	public static String[] getIndexContents(String tree) throws IOException {
@@ -52,11 +54,14 @@ public class Index {
 			}
 		}
 		
-//		for (String str:arr) {
-//			System.out.println("IN ARR: " + str);
-//		}
 		
 		//checked in current staged things, now start the traversal process of remaining deletes/edits
+		if (delete.size()>0||edit.size()>0) {
+			for (String str:arr) {
+				if (str.substring(0,3).equals("obj"))
+					arr.remove(str);
+			}
+		}
 		while (delete.size()>0) {
 			String finding = "Blob : " + Blob.createHash(delete.get(0).substring(8)) + " : " + delete.get(0).substring(8);
 			ArrayList<String> allBlobs = deleteBlob(finding,tree);		
@@ -75,6 +80,9 @@ public class Index {
 		
 		
 		//CONVERT TO REGULAR ARRAY 
+		for (String str:arr) {
+			System.out.println("IN ARR: " + str);
+		}
 		String[] array = new String[arr.size()];
 		for (int i = 0; i < array.length; i++) {
 			array[i]=arr.get(i);
@@ -93,14 +101,15 @@ public class Index {
 			Scanner ts = new Scanner(tr);
 			while (ts.hasNextLine()) {
 				String next = ts.nextLine();
+				System.out.println("NEXT:" + next);
 				if (next.equals(finding)) {
 					found = true;
 				}
 				else {
 					if (next.substring(0,4).equals("Blob")) {
-						allBlobs.add(next);//in correct format 
+						allBlobs.add(next);//in correct format
 					}
-					else {//line = tree line
+					else if (!next.equals("")){//line = tree line
 						maybetree = next.substring(7);
 					}
 				}
@@ -111,7 +120,9 @@ public class Index {
 			}
 			else {
 				if (!(maybetree=="")) {
-					allBlobs.add("Blob : Tree : " + maybetree);
+					//allBlobs.add("Blob : Tree : " + maybetree);
+					nT = maybetree;
+					newTree = true;
 				}
 			}
 		}

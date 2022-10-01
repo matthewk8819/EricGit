@@ -71,12 +71,32 @@ public class Git {
 		i.add(fileName);//creates blob in the index
 	}
 	
+	public void stageDelete(String fileName) {
+		//add a line to the index - literally file write it 
+		//when copying in getIndexContents, if find something with *DELETE* or *EDIT* in it, then don't add it
+		//if you find edit or delete, this is the key to start doing things - with boolean (intake the tree name anyways)
+		//0th order: still add everything to the arr of contents 
+		//first order: traverse starting the last tree (can get tree from parameter)
+		// - if there is no tree, means it is the first commit - just go thru the existing contents array and delete the file to be deleted
+		//second order: code the traversal - go thru and do the thing (thru files)
+		// - search for the blob (create a string called finding), same process as before
+		// - go thru each tree, collect all the blobs - two conditions: find or don't find - can traverse using tree location in that tree
+		//third order: rn you should have an array of allBlobs (which potentially has a tree)
+		//fourth order: go thru the arr made in getContents, delete the one with tree (if it exists)
+		//fifth order: create a new array with combined contents and allblobs, return it 
+		//sixth order: this should have all of the things its supposed to with the correct pointers 
+		
+		//new ideology is that its centered around the getIndexContents - only thing thats changing is the tree pointers 
+		
+		
+	}
+	
 	//adds a commit: if first, sets to head; else makes two way connection with this and prev commit
 	public void addCommit (String summary, String auth) throws IOException {
 		if (headFile==null) {
 			File headF = new File ("HEAD");
 			//read in blobs from index
-			String [] indexContents = i.getIndexContents();
+			String [] indexContents = i.getIndexContents("NO TREE HERE");//for the tree
 			Commit newCommit = new Commit("",indexContents,summary,auth,null);
 			FileWriter fw = new FileWriter(headF);
 			fw.append(newCommit.getHash());
@@ -91,7 +111,7 @@ public class Git {
 			File lastCommit = new File("objects/" + prevCommit);
 			Scanner commitReader = new Scanner(lastCommit);
 			String lastTree = commitReader.nextLine();
-			String [] indexContents = i.getIndexContents();
+			String [] indexContents = i.getIndexContents(lastTree);
 			Commit newCommit = new Commit(lastTree,indexContents,summary,auth,"objects/"+prevCommit);
 			//set the prevCommit next to this current one 
 			Commit.setNext(prevCommit, newCommit.getHash());

@@ -23,6 +23,7 @@ public class Git {
 		git.stageFile("text2.txt");
 		git.stageFile("text3.txt");
 		git.addCommit("SUMMARY2","SAME AUTHOR");
+		git.stageDelete("text2.txt");
 		git.stageFile("text4.txt");
 		git.stageFile("text5.txt");
 		git.addCommit("Summary3", "NEW AUTHOR");
@@ -67,27 +68,28 @@ public class Git {
 		w.close();
 	}
 	
-	public void stageFile(String fileName) {
+	public void stageFile(String fileName) throws IOException {
 		i.add(fileName);//creates blob in the index
 	}
 	
 	public void stageDelete(String fileName) throws IOException{
-		//add a line to the index - literally file write it 
-		File f = new File("index");
-		FileWriter fw = new FileWriter(f);
-		Scanner indexScanner = new Scanner(f);
-		String alreadyThere = "";
-		while (indexScanner.hasNextLine()) {
-			alreadyThere = indexScanner.nextLine() + "\n";
-		}
-		String deleteLine = "*DELETE*" + fileName; //ex: *DELETE*text2.txt
-		alreadyThere = alreadyThere + deleteLine;
-		fw.append(alreadyThere); 
-		
-		
+		//adding all the delete/edit calls into the index 
+				File idf = new File("index");
+				Scanner indexScanner = new Scanner(idf);
+				String alreadyThere = "";
+				while (indexScanner.hasNextLine()) {
+					String str = indexScanner.nextLine();
+					if (!alreadyThere.contains(str))
+						alreadyThere = indexScanner.nextLine() + "\n";
+				}
+				String deleteLine = "*DELETE*" + fileName; //ex: *DELETE*text2.txt
+				alreadyThere = alreadyThere + deleteLine;
+				FileWriter fww = new FileWriter(idf);
+				fww.append(alreadyThere); 
+				fww.close();		
 		//when copying in getIndexContents, if find something with *DELETE* or *EDIT* in it, then don't add it
-		//if you find edit or delete,boolean = true and add it to the delete or edit arraylist 
-		//0th order: still add everything to the arr of contents 
+		//if you find edit or delete, add it to the delete or edit arraylists 
+		//0th order: still add everything to the arr of contents (done in the else of that loop) 
 		// - NEXT STEPS: DO IT PER DELETE/EDIT: start with filename, finish with a new arraylist (don't submit because might have more edits/deletes) - JUST LOGICED IT OUT AND IT WOULD WORK - AS LONG AS IT WORKS CORRECTLY AND EACH ITERATION WOULD LEAVE THE arraylist in good condition with at most 1 tree and the rest of the blobs 
 		//first order 1: look at current arraylist and see if it exists - if it does, delete it from the array and the delete array 
 		//first order: traverse starting the last tree (can get tree from parameter)
@@ -107,6 +109,9 @@ public class Git {
 	
 	//adds a commit: if first, sets to head; else makes two way connection with this and prev commit
 	public void addCommit (String summary, String auth) throws IOException {
+		
+		
+		//
 		if (headFile==null) {
 			File headF = new File ("HEAD");
 			//read in blobs from index
@@ -116,7 +121,6 @@ public class Git {
 			fw.append(newCommit.getHash());
 			fw.close();
 			headFile = headF.getName();
-			System.out.println(headFile);
 		}
 		else {//not first commit
 			File f = new File(headFile);

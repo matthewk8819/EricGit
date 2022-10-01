@@ -47,6 +47,7 @@ public class Index {
 				edit.add(intake);
 			}
 			else {
+				if (!arr.contains(intake))
 				arr.add(intake);
 			}
 		}
@@ -66,9 +67,18 @@ public class Index {
 			}
 		}
 		
+		for (String str:arr) {
+			System.out.println("IN ARR: " + str);
+		}
+		
 		//checked in current staged things, now start the traversal process of remaining deletes/edits
 		while (delete.size()>0) {
-			
+			//deleteBlob(String treePointer, Array
+			System.out.println(delete.get(0));
+			for (String str:delete) {
+				System.out.println("IN DELETE: " + str);
+			}
+			break;
 		}
 		while (edit.size()>0) {
 			
@@ -117,12 +127,18 @@ public class Index {
 		return ret;
 	}
 	
-	String stringifyIndex(HashMap<String, String> map) {
-		StringBuilder ret = new StringBuilder();
+	String stringifyIndex(HashMap<String, String> map) throws IOException {
+		String ret = "";
 		for(Map.Entry<String, String> i : map.entrySet()) {
-			ret.append(i.getValue()).append(" : ").append(i.getKey()).append('\n');
+			if (!ret.contains((i.getValue()) + (" : ") + (i.getKey()) + ('\n')));
+			ret+=(i.getValue()) + (" : ") + (i.getKey()) + ('\n');
 		}
-		return ret.toString();
+		File index = new File("index");
+		Scanner in = new Scanner(index);
+		while (in.hasNextLine()) {
+			ret+=(in.nextLine() + "\n");
+		}
+		return ret;
 	}
 	
 	void loadIndex() {
@@ -137,7 +153,7 @@ public class Index {
 		index = parseIndex(content);
 	}
 	
-	void saveIndex() {
+	void saveIndex() throws IOException {
 		Path indexFile = Paths.get("index");
 		String content = stringifyIndex(index);
 		try {
@@ -149,13 +165,14 @@ public class Index {
 		}
 	}
 	
-	public void add(String filename) {
+	public void add(String filename) throws IOException{
 		loadIndex();
 		Blob blob = new Blob(filename);
 		index.put(filename, blob.getHash());
 		saveIndex();
 	}
-	public void remove(String filename) {
+
+	public void remove(String filename) throws IOException {
 		loadIndex();
 		Path path = Paths.get("objects", Blob.createHash(filename));
 		try {

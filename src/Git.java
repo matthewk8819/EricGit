@@ -22,6 +22,8 @@ public class Git {
 		git.stageFile("text1.txt");
 		git.stageFile("text2.txt");
 		git.stageFile("text3.txt");
+		//need to fix it if it is in the same commit - fix later 
+		//should be the lines with the two for loops 
 		git.addCommit("SUMMARY2","SAME AUTHOR");
 		git.stageDelete("text2.txt");
 		git.stageFile("text4.txt");
@@ -79,8 +81,7 @@ public class Git {
 				String alreadyThere = "";
 				while (indexScanner.hasNextLine()) {
 					String str = indexScanner.nextLine();
-					if (!alreadyThere.contains(str))
-						alreadyThere = indexScanner.nextLine() + "\n";
+					alreadyThere = str + "\n";
 				}
 				String deleteLine = "*DELETE*" + fileName; //ex: *DELETE*text2.txt
 				alreadyThere = alreadyThere + deleteLine;
@@ -109,9 +110,6 @@ public class Git {
 	
 	//adds a commit: if first, sets to head; else makes two way connection with this and prev commit
 	public void addCommit (String summary, String auth) throws IOException {
-		
-		
-		//
 		if (headFile==null) {
 			File headF = new File ("HEAD");
 			//read in blobs from index

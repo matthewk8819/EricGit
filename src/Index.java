@@ -12,22 +12,6 @@ import java.util.Scanner;
 
 public class Index {
 	
-//	public static void main (String [] args) throws IOException {
-//		Index index = new Index();
-//		index.init();
-//		index.add("file1");
-//		index.add("file2");
-//		//index.remove("file1");
-//		String[] arr = new String[1];
-//		try {
-//			arr = getIndexContents();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		System.out.println(arr[0] + "\n" + arr[1]);
-//	}
-	//CAN REMOVE THE STATIC AFTER DONE WITH MAIN TESTER 
 	static HashMap<String, String> index = new HashMap<String, String>();
 	public static String[] getIndexContents(String tree) throws IOException {
 		ArrayList<String> delete = new ArrayList<String>();//contains filenames of deletes
@@ -40,6 +24,7 @@ public class Index {
 		ArrayList<String> arr = new ArrayList<String>();
 		while (indexScanner.hasNextLine()) {
 			String intake = indexScanner.nextLine();
+//			System.out.println("INTAKE " + intake);
 			if (intake.substring(0,8).equals("*DELETE*")) {
 				delete.add(intake);
 			}
@@ -51,9 +36,9 @@ public class Index {
 				arr.add(intake);
 			}
 		}
+		
 		//rn everything should be added if it isn't a call
-		//should contain 
-		//for both edit and delete arrays, check if the array has it, if it does then delete it from the delete or edit arrays
+		//Purpose: for both edit and delete arrays, check if the array has it, if it does then delete it from the delete or edit arrays
 		for (String str:delete) {
 			String finding = Blob.createHash(str) + " : " + str;
 			if (arr.remove(finding)) {
@@ -67,18 +52,21 @@ public class Index {
 			}
 		}
 		
-		for (String str:arr) {
-			System.out.println("IN ARR: " + str);
-		}
+//		for (String str:arr) {
+//			System.out.println("IN ARR: " + str);
+//		}
 		
 		//checked in current staged things, now start the traversal process of remaining deletes/edits
 		while (delete.size()>0) {
-			//deleteBlob(String treePointer, Array
-			System.out.println(delete.get(0));
-			for (String str:delete) {
-				System.out.println("IN DELETE: " + str);
+			String finding = "Blob : " + Blob.createHash(delete.get(0).substring(8)) + " : " + delete.get(0).substring(8);
+			ArrayList<String> allBlobs = deleteBlob(finding,tree);		
+			for (String str:allBlobs) {
+				arr.add(str.substring(7));
 			}
-			break;
+			delete.remove(0);
+//			for (String str:delete) {
+//				System.out.println("IN DELETE: " + str);
+//			}
 		}
 		while (edit.size()>0) {
 			
@@ -94,6 +82,40 @@ public class Index {
 		clearIndex();
 		//THIS RETURN WILL HAVE THE FINAL THING - NOTHING AFTER THIS SHOULD BE CHANGED
 		return array;
+	}
+	
+	private static ArrayList<String> deleteBlob(String finding, String tree) throws FileNotFoundException {
+		ArrayList<String> allBlobs = new ArrayList<String>();
+		boolean found = false;
+		File tr = new File(tree);
+		String maybetree = "";
+		while (found == false) {
+			Scanner ts = new Scanner(tr);
+			while (ts.hasNextLine()) {
+				String next = ts.nextLine();
+				if (next.equals(finding)) {
+					found = true;
+				}
+				else {
+					if (next.substring(0,4).equals("Blob")) {
+						allBlobs.add(next);//in correct format 
+					}
+					else {//line = tree line
+						maybetree = next.substring(7);
+					}
+				}
+				
+			}
+			if (found==false) {
+				tr = new File(maybetree);
+			}
+			else {
+				if (!(maybetree=="")) {
+					allBlobs.add("Blob : Tree : " + maybetree);
+				}
+			}
+		}
+		return allBlobs;
 	}
 	
 	private static void clearIndex() throws IOException {//REMOVE STATIC LATER 
@@ -170,6 +192,19 @@ public class Index {
 		Blob blob = new Blob(filename);
 		index.put(filename, blob.getHash());
 		saveIndex();
+//		
+//		File idf = new File("index");
+//		Scanner indexScanner = new Scanner(idf);
+//		String alreadyThere = "";
+//		while (indexScanner.hasNextLine()) {
+//			String str = indexScanner.nextLine();
+//			alreadyThere = str + "\n";
+//		}
+//		String addLine = Blob.createHash(filename) + " : " + filename; //ex: *DELETE*text2.txt
+//		alreadyThere = alreadyThere + addLine;
+//		FileWriter fww = new FileWriter(idf);
+//		fww.append(alreadyThere); 
+//		fww.close();		
 	}
 
 	public void remove(String filename) throws IOException {

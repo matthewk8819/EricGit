@@ -72,13 +72,13 @@ class GitTest {
 		git.stageFile("text4.txt");
 		git.stageFile("text5.txt");
 		git.addCommit("3rd commit: added 4 5 deleted 1", "NEW AUTHOR");
+		git.stageDelete("text4.txt");
 		git.stageFile("text6.txt");
 		git.stageFile("text7.txt");
 		git.stageFile("text8.txt");
-		git.stageDelete("text4.txt");
 		git.addCommit("4th commit: added 6 7 8 delete 4","me");
-		git.stageFile("text9.txt");
-		git.addCommit("5th commit: added 9", "still me brother");
+		git.stageDelete("text6.txt");
+		git.addCommit("5th commit: delete 6", "still me brother");
 	}
 
 }

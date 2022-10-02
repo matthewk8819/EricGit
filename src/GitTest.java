@@ -67,21 +67,18 @@ class GitTest {
 		git.stageFile("text1.txt");
 		git.stageFile("text2.txt");
 		git.stageFile("text3.txt");
-		//need to fix it if it is in the same commit - fix later 
-		//should be the lines with the two for loops 
-		git.addCommit("2nd commit: added 1 2 3 ","SAME AUTHOR");
+		git.addCommit("2nd commit: added 1 2 3","SAME AUTHOR");
 		git.stageDelete("text1.txt");
 		git.stageFile("text4.txt");
 		git.stageFile("text5.txt");
 		git.addCommit("3rd commit: added 4 5 deleted 1", "NEW AUTHOR");
 		git.stageFile("text6.txt");
 		git.stageFile("text7.txt");
+		git.stageFile("text8.txt");
 		git.stageDelete("text4.txt");
-		git.addCommit("4th commit: added 6 7 delete 4","me");
-//		git.stageFile("text8.txt");
+		git.addCommit("4th commit: added 6 7 8 delete 4","me");
 		git.stageFile("text9.txt");
-//		git.stageEdit("text7.txt");
-		git.addCommit("5th commit: added 8 9 edited 7", "still me brother");
+		git.addCommit("5th commit: added 9", "still me brother");
 	}
 
 }

@@ -113,7 +113,6 @@ public class Index {
 						maybetree = next.substring(7);
 					}
 				}
-				
 			}
 			if (found==false) {
 				tr = new File(maybetree);
@@ -125,6 +124,7 @@ public class Index {
 					newTree = true;
 				}
 			}
+			
 		}
 		return allBlobs;
 	}
